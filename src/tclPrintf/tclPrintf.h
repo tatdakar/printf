@@ -36,8 +36,8 @@
  * THE SOFTWARE.
  */
 
-#ifndef PRINTF_H_
-#define PRINTF_H_
+#ifndef TCLPRINTF_H_
+#define TCLPRINTF_H_
 
 #ifdef __cplusplus
 # include <cstdarg>
@@ -207,4 +207,4 @@ int tcl_vfctprintf(void (*out)(char c, void* extra_arg), void* extra_arg, const 
 # undef tcl_vprintf
 #endif
 
-#endif  // PRINTF_H_
+#endif  // TCLPRINTF_H_
