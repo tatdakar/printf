@@ -14,7 +14,7 @@ int strcmp_(const char* lhs, const char* rhs)
 enum { BufferSize = 100 };
 char buffer[BufferSize];
 
-void putchar_(char c)
+void tcl_putchar(char c)
 {
   for(char* ptr = buffer; ptr - buffer < BufferSize; ptr++) {
     if (*ptr == '\0') {

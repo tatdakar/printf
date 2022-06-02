@@ -32,6 +32,21 @@
 #include <printf_config.h>
 #include <tclPrintf/tclPrintf.c>
 
+
+#if PRINTF_ALIAS_STANDARD_FUNCTION_NAMES
+# error testing does not support option PRINTF_ALIAS_STANDARD_FUNCTION_NAMES
+#else
+# define printf_    tcl_printf
+# define sprintf_   tcl_sprintf
+# define vsprintf_  tcl_vsprintf
+# define snprintf_  tcl_snprintf
+# define vsnprintf_ tcl_vsnprintf
+# define vprintf_   tcl_vprintf
+# define fctprintf  tcl_fctprintf
+# define vfctprintf tcl_vfctprintf
+#endif
+
+
 // use the 'catch' test framework
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp"
@@ -130,6 +145,7 @@ do {                                                             \
 
 #ifdef TEST_WITH_NON_STANDARD_FORMAT_STRINGS
 DISABLE_WARNING_PUSH
+
 DISABLE_WARNING_PRINTF_FORMAT
 DISABLE_WARNING_PRINTF_FORMAT_EXTRA_ARGS
 DISABLE_WARNING_PRINTF_FORMAT_INVALID_SPECIFIER
@@ -151,7 +167,7 @@ constexpr const size_t base_buffer_size { 100 };
 static char   printf_buffer[base_buffer_size];
 static size_t printf_idx = 0U;
 
-void putchar_(char character)
+void tcl_putchar(char character)
 {
   printf_buffer[printf_idx++] = character;
 }

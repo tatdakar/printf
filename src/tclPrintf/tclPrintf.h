@@ -71,12 +71,12 @@ __attribute__((format(printf, (one_based_format_index), (first_arg))))
 #endif
 
 #if PRINTF_ALIAS_STANDARD_FUNCTION_NAMES
-# define printf_    printf
-# define sprintf_   sprintf
-# define vsprintf_  vsprintf
-# define snprintf_  snprintf
-# define vsnprintf_ vsnprintf
-# define vprintf_   vprintf
+# define tcl_printf    printf
+# define tcl_sprintf   sprintf
+# define tcl_vsprintf  vsprintf
+# define tcl_snprintf  snprintf
+# define tcl_vsnprintf vsnprintf
+# define tcl_vprintf   vprintf
 #endif
 
 // If you want to include this implementation file directly rather than
@@ -107,13 +107,13 @@ __attribute__((format(printf, (one_based_format_index), (first_arg))))
  * @param c the single character to print
  */
 PRINTF_VISIBILITY
-void putchar_(char c);
+void tcl_putchar(char c);
 
 
 /**
  * An implementation of the C standard's printf/vprintf
  *
- * @note you must implement a @ref putchar_ function for using this function - it invokes @ref putchar_
+ * @note you must implement a @ref tcl_putchar function for using this function - it invokes @ref tcl_putchar
  * rather than directly performing any I/O (which insulates it from any dependence on the operating system
  * and external libraries).
  *
@@ -124,9 +124,9 @@ void putchar_(char c);
  */
  ///@{
 PRINTF_VISIBILITY
-int printf_(const char* format, ...) ATTR_PRINTF(1, 2);
+int tcl_printf(const char* format, ...) ATTR_PRINTF(1, 2);
 PRINTF_VISIBILITY
-int vprintf_(const char* format, va_list arg) ATTR_VPRINTF(1);
+int tcl_vprintf(const char* format, va_list arg) ATTR_VPRINTF(1);
 ///@}
 
 
@@ -145,9 +145,9 @@ int vprintf_(const char* format, va_list arg) ATTR_VPRINTF(1);
  */
 ///@{
 PRINTF_VISIBILITY
-int  sprintf_(char* s, const char* format, ...) ATTR_PRINTF(2, 3);
+int  tcl_sprintf(char* s, const char* format, ...) ATTR_PRINTF(2, 3);
 PRINTF_VISIBILITY
-int vsprintf_(char* s, const char* format, va_list arg) ATTR_VPRINTF(2);
+int tcl_vsprintf(char* s, const char* format, va_list arg) ATTR_VPRINTF(2);
 ///@}
 
 
@@ -168,9 +168,9 @@ int vsprintf_(char* s, const char* format, va_list arg) ATTR_VPRINTF(2);
  */
 ///@{
 PRINTF_VISIBILITY
-int  snprintf_(char* s, size_t count, const char* format, ...) ATTR_PRINTF(3, 4);
+int  tcl_snprintf(char* s, size_t count, const char* format, ...) ATTR_PRINTF(3, 4);
 PRINTF_VISIBILITY
-int vsnprintf_(char* s, size_t count, const char* format, va_list arg) ATTR_VPRINTF(3);
+int tcl_vsnprintf(char* s, size_t count, const char* format, va_list arg) ATTR_VPRINTF(3);
 ///@}
 
 
@@ -178,8 +178,8 @@ int vsnprintf_(char* s, size_t count, const char* format, va_list arg) ATTR_VPRI
 /**
  * printf/vprintf with user-specified output function
  *
- * An alternative to @ref printf_, in which the output function is specified dynamically
- * (rather than @ref putchar_ being used)
+ * An alternative to @ref tcl_printf, in which the output function is specified dynamically
+ * (rather than @ref tcl_putchar being used)
  *
  * @param out An output function which takes one character and a type-erased additional parameters
  * @param extra_arg The type-erased argument to pass to the output function @p out with each call
@@ -190,21 +190,21 @@ int vsnprintf_(char* s, size_t count, const char* format, va_list arg) ATTR_VPRI
  *
  */
 PRINTF_VISIBILITY
-int fctprintf(void (*out)(char c, void* extra_arg), void* extra_arg, const char* format, ...) ATTR_PRINTF(3, 4);
+int tcl_fctprintf(void (*out)(char c, void* extra_arg), void* extra_arg, const char* format, ...) ATTR_PRINTF(3, 4);
 PRINTF_VISIBILITY
-int vfctprintf(void (*out)(char c, void* extra_arg), void* extra_arg, const char* format, va_list arg) ATTR_VPRINTF(3);
+int tcl_vfctprintf(void (*out)(char c, void* extra_arg), void* extra_arg, const char* format, va_list arg) ATTR_VPRINTF(3);
 
 #ifdef __cplusplus
 } // extern "C"
 #endif
 
 #if PRINTF_ALIAS_STANDARD_FUNCTION_NAMES
-# undef printf_
-# undef sprintf_
-# undef vsprintf_
-# undef snprintf_
-# undef vsnprintf_
-# undef vprintf_
+# undef tcl_printf
+# undef tcl_sprintf
+# undef tcl_vsprintf
+# undef tcl_snprintf
+# undef tcl_vsnprintf
+# undef tcl_vprintf
 #endif
 
 #endif  // PRINTF_H_

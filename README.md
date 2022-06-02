@@ -1,9 +1,10 @@
-# Standalone printf/sprintf formatted printing function library
+# Standalone printf/sprintf formatted printing function library with prefix tcl_ to avoid nameing collisions
 
+<sup>Parent repositories: </sup>
 [![tests passing](https://github.com/eyalroz/printf/actions/workflows/build_and_test.yml/badge.svg)](https://github.com/eyalroz/printf/actions/workflows/build_and_test.yml)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/eyalroz/printf/master/LICENSE)
 [![Github Bug-type issues](https://shields.io/github/issues-search/eyalroz/printf?query=is:open%20is:issue%20label:bug&label=open%20bugs)](http://github.com/eyalroz/printf/issues)
-<sup>Parent repository: </sup>[![Github issues (original repo)](https://img.shields.io/github/issues/mpaland/printf.svg)](http://github.com/mpaland/printf/issues)
+[![Github issues (original repo)](https://img.shields.io/github/issues/mpaland/printf.svg)](http://github.com/mpaland/printf/issues)
 <!-- Can't use Travis - they stopped offering free builds [![Build Status](https://travis-ci.com/eyalroz/printf.svg?branch=master)](https://travis-ci.com/eyalroz/printf) -->
 <!-- No releases yet... [![Github Releases](https://img.shields.io/github/release/eyalroz/printf.svg)](https://github.com/mpaland/eyalroz/releases)-->
 
@@ -15,11 +16,12 @@
 
 This is a small but **fully-loaded** implementation of C's formatted printing family of functions. It was originally designed by Marco Paland, with the primary use case being in embedded systems - where these functions are unavailable, or when one needs to avoid the memory footprint of linking against a full-fledged libc. The library can be made even smaller by partially excluding some of the supported format specifiers during compilation. The library stands alone, with **No external dependencies**.
 
-It is a fork of the original [mpaland/printf](https://github.com/mpaland/printf) repository by [Marco Paland](https://github.com/mpaland), with multiple bug fixes and a few more features.
+It is a fork of [eyalroz/printf](https://github.com/eyalroz/printf) which again is a fork of the original [mpaland/printf](https://github.com/mpaland/printf) repository by [Marco Paland](https://github.com/mpaland).
+[eyalroz/printf](https://github.com/eyalroz/printf) is well maintained and has multiple bug fixes and a few more features. This fork has some custimizations - mainly the use of prefixes for function names.
 
 ## Highlights, design goals and the fork
 
-If you use a typical libc's `sprintf()` implementation (or similar function), you are likely to pull in a *lot* of unwanted library definitions and can bloat code size - typically by as much as 20 KiB. Now, there is a boatload of so called 'tiny' `printf()`-family implementations around. So why this one? Or rather, why [mpaland/printf](https://github.com/mpaland/printf), and then why this fork? 
+If you use a typical libc's `sprintf()` implementation (or similar function), you are likely to pull in a *lot* of unwanted library definitions and can bloat code size - typically by as much as 20 KiB. Now, there is a boatload of so called 'tiny' `printf()`-family implementations around. So why this one? Or rather, why [mpaland/printf](https://github.com/mpaland/printf), and then why [eyalroz/printf](https://github.com/eyalroz/printf) or this fork? 
 
 Well, Marco tried out many of the available `printf()` implementations, but was disappointed: Some are not thread-safe; some have indirect dependencies on libc or other libraries, making them inconvenient to build and larger when compiled; some only offer extremely limited flag and specifier support; and some produce non-standard-compiled output, failing many tests no found in the repository's test suite.
 
@@ -32,6 +34,7 @@ Marco therefore decided to write his own implementation, with the following goal
  - Reentrancy and thread-safety; `malloc()` freeness.
  - Clean, robust code.
  - Extensive test coverage.
+ - Prefix function names to avoid collisions
  - MIT license
 
 Marco's repository upheld most of these goals - but did not quite make it all of the way. As of mid-2021, it still had many C-standard-non-compliance bugs; the test suite was quite lacking in coverage; some goals were simply discarded (like avoiding global/local-static constants) etc. The repository had become quite popular, but unfortunately, Marco had been otherwise preoccupied; he had not really touched the code in the two years prior; many bug reports were pending, and so were many pull requests from eary adopters who had fixed some of the bugs they had encountered.
@@ -65,9 +68,9 @@ The author of this fork was one of the latercomer bug-reporters-and-PR-authors; 
 
 Whichever way you choose to use the library:
 
-* You can have this library stand-in for the C standard library's `printf()` family of functions, e.g. provide `snprintf()` instead of `snprintf_()`, by setting an appropriate [preprocessor definition](#cmake-options-and-preprocessor-definitions) during compilation and use. 
+* You can have this library stand-in for the C standard library's `printf()` family of functions, e.g. provide `snprintf()` instead of `tcl_snprintf()`, by setting an appropriate [preprocessor definition](#cmake-options-and-preprocessor-definitions) during compilation and use. 
 * Speaking of the [preprocessor definitions](#cmake-options-and-preprocessor-definitions) which affect the library's behavior - you have to be consistent in their choice when building and when using the library. (The easiest way to do that is just not to change any of them and accept the reasonable defaults.)
-* Two of the functions --- `printf_()` and `vprintf_()` --- will only be usable if you implement a `putchar_(char c)` function to  underlie them.
+* Two of the functions --- `tcl_printf()` and `tcl_vprintf()` --- will only be usable if you implement a `tcl_putchar(char c)` function to  underlie them.
 * **Avoid `sprintf()` in favor of `snprintf()` for safety and security** - and that goes for the standard C library `sprintf()` as well:. `sprintf()` is unaware of the amount of memory allocated for the string it writes into, and will "happily" overflow your buffer; instead of calling it, pass your buffer size to `snprintf()` - and avoid overflow.
 
 Finally, if you've started using the library in a publicly-available (FOSS or commercial) project, please consider emailing [@eyalroz](https://github.com/eyalroz), or open an [issue](https://github.com/eyalroz/printf/issues/), to announce this.
@@ -112,48 +115,27 @@ Note: The preprocessor definitions are taken into account when compiling `printf
 
 The library offers the following, with the same signatures as in the standard C library (plus an extra underscore):
 ```
-int printf_(const char* format, ...);
-int sprintf_(char* s, const char* format, ...);
-int vsprintf_(char* s, const char* format, va_list arg);
-int snprintf_(char* s, size_t n, const char* format, ...);
-int vsnprintf_(char* s, size_t n, const char* format, va_list arg);
-int vprintf_(const char* format, va_list arg);
+int tcl_printf(const char* format, ...);
+int tcl_sprintf(char* s, const char* format, ...);
+int tcl_vsprintf(char* s, const char* format, va_list arg);
+int tcl_snprintf(char* s, size_t n, const char* format, ...);
+int tcl_vsnprintf(char* s, size_t n, const char* format, va_list arg);
+int tcl_vprintf(const char* format, va_list arg);
 ```
-Note that `printf()` and `vprintf()`  don't actually write anything on their own: In addition to their parameters, you must provide them with a lower-level `putchar_()` function which they can call for actual printing. This is part of this library's independence: It is isolated from dealing with console/serial output, files etc.
+Note that `tcl_printf()` and `tcl_vprintf()`  don't actually write anything on their own: In addition to their parameters, you must provide them with a lower-level `tcl_putchar()` function which they can call for actual printing. This is part of this library's independence: It is isolated from dealing with console/serial output, files etc.
 
 Two additional functions are provided beyond those available in the standard library:
 ```
-int fctprintf(void (*out)(char c, void* extra_arg), void* extra_arg, const char* format, ...);
-int vfctprintf(void (*out)(char c, void* extra_arg), void* extra_arg, const char* format, va_list arg);
+int tcl_fctprintf(void (*out)(char c, void* extra_arg), void* extra_arg, const char* format, ...);
+int tcl_vfctprintf(void (*out)(char c, void* extra_arg), void* extra_arg, const char* format, va_list arg);
 ```
-These higher-order functions allow for better flexibility of use: You can decide to do different things with the individual output characters: Encode them, compress them, filter them, append them to a buffer or a file, or just discard them. This is achieved by you passing a pointer to your own state information - through `(v)fctprintf()` and all the way to your own `out()` function.
+These higher-order functions allow for better flexibility of use: You can decide to do different things with the individual output characters: Encode them, compress them, filter them, append them to a buffer or a file, or just discard them. This is achieved by you passing a pointer to your own state information - through `(v)tcl_fctprintf()` and all the way to your own `out()` function.
 
-#### "... but I don't like the underscore-suffix names :-("
+#### "... but I prefer the the standard library's names"
 
 You can [configure](#CMake-options-and-preprocessor-definitions) the library to alias the standard library's names, in which case it exposes `printf()`, `sprintf()`, `vsprintf()` and so on.
 
 If you alias the standard library function names, *be careful of GCC/clang's `printf()` optimizations!*: GCC and clang recognize patterns such as `printf("%s", str)` or `printf("%c", ch)`, and perform a "strength reduction" of sorts by invoking `puts(stdout, str)` or `putchar(ch)`. If you enable the `PRINTF_ALIAS_STANDARD_FUNCTION_NAMES` option (see below), and do not ensure your code is compiled with the `-fno-builtin-printf` option - you might inadvertantly pull in the standard library implementation - either succeeding and depending on it, or failing with a linker error. When using `printf` as a CMake imported target, that should already be arranged for, but again: Double-check.
-
-<br>
-
-Alternatively, you can write short wrappers with your preferred names. This is completely trivial with the v-functions, e.g.:
-```
-int my_vprintf(const char* format, va_list va)
-{
-  return vprintf_(format, va);
-}
-```
-and is still pretty straightforward with the variable-number-of-arguments functions:
-```
-int my_sprintf(char* buffer, const char* format, ...)
-{
-  va_list va;
-  va_start(va, format);
-  const int ret = vsprintf_(buffer, format, va);
-  va_end(va);
-  return ret;
-}
-```
 
 ### Supported Format Specifiers
 

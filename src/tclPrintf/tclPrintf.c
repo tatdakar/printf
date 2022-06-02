@@ -59,12 +59,12 @@ extern "C" {
 #include "tclPrintf.h"
 
 #if PRINTF_ALIAS_STANDARD_FUNCTION_NAMES
-# define printf_    printf
-# define sprintf_   sprintf
-# define vsprintf_  vsprintf
-# define snprintf_  snprintf
-# define vsnprintf_ vsnprintf
-# define vprintf_   vprintf
+# define tcl_printf    printf
+# define tcl_sprintf   sprintf
+# define tcl_vsprintf  vsprintf
+# define tcl_snprintf  snprintf
+# define tcl_vsnprintf vsnprintf
+# define tcl_vprintf   vprintf
 #endif
 
 
@@ -350,12 +350,12 @@ static inline void append_termination_with_gadget(output_gadget_t* gadget)
   gadget->buffer[null_char_pos] = '\0';
 }
 
-// We can't use putchar_ as is, since our output gadget
+// We can't use tcl_putchar as is, since our output gadget
 // only takes pointers to functions with an extra argument
 static inline void putchar_wrapper(char c, void* unused)
 {
   (void) unused;
-  putchar_(c);
+  tcl_putchar(c);
 }
 
 static inline output_gadget_t discarding_gadget()
@@ -1353,61 +1353,61 @@ static int internal_vsnprintf(output_gadget_t* output, const char* format, va_li
 
 ///////////////////////////////////////////////////////////////////////////////
 
-int vprintf_(const char* format, va_list arg)
+int tcl_vprintf(const char* format, va_list arg)
 {
   output_gadget_t gadget = extern_putchar_gadget();
   return internal_vsnprintf(&gadget, format, arg);
 }
 
-int vsnprintf_(char* s, size_t n, const char* format, va_list arg)
+int tcl_vsnprintf(char* s, size_t n, const char* format, va_list arg)
 {
   output_gadget_t gadget = buffer_gadget(s, n);
   return internal_vsnprintf(&gadget, format, arg);
 }
 
-int vsprintf_(char* s, const char* format, va_list arg)
+int tcl_vsprintf(char* s, const char* format, va_list arg)
 {
-  return vsnprintf_(s, PRINTF_MAX_POSSIBLE_BUFFER_SIZE, format, arg);
+  return tcl_vsnprintf(s, PRINTF_MAX_POSSIBLE_BUFFER_SIZE, format, arg);
 }
 
-int vfctprintf(void (*out)(char c, void* extra_arg), void* extra_arg, const char* format, va_list arg)
+int tcl_vfctprintf(void (*out)(char c, void* extra_arg), void* extra_arg, const char* format, va_list arg)
 {
   output_gadget_t gadget = function_gadget(out, extra_arg);
   return internal_vsnprintf(&gadget, format, arg);
 }
 
-int printf_(const char* format, ...)
+int tcl_printf(const char* format, ...)
 {
   va_list args;
   va_start(args, format);
-  const int ret = vprintf_(format, args);
+  const int ret = tcl_vprintf(format, args);
   va_end(args);
   return ret;
 }
 
-int sprintf_(char* s, const char* format, ...)
+int tcl_sprintf(char* s, const char* format, ...)
 {
   va_list args;
   va_start(args, format);
-  const int ret = vsprintf_(s, format, args);
+  const int ret = tcl_vsprintf(s, format, args);
   va_end(args);
   return ret;
 }
 
-int snprintf_(char* s, size_t n, const char* format, ...)
+int tcl_snprintf(char* s, size_t n, const char* format, ...)
 {
   va_list args;
   va_start(args, format);
-  const int ret = vsnprintf_(s, n, format, args);
+  const int ret = tcl_vsnprintf(s, n, format, args);
   va_end(args);
   return ret;
 }
 
-int fctprintf(void (*out)(char c, void* extra_arg), void* extra_arg, const char* format, ...)
+int tcl_fctprintf(void (*out)(char c, void* extra_arg), void* extra_arg, const char* format, ...)
 {
   va_list args;
   va_start(args, format);
-  const int ret = vfctprintf(out, extra_arg, format, args);
+  const int ret = tcl_vfctprintf(out, extra_arg, format, args);
   va_end(args);
   return ret;
 }

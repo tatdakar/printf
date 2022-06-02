@@ -19,12 +19,16 @@
 #endif
 
 #if PRINTF_ALIAS_STANDARD_FUNCTION_NAMES
-# define printf_    printf
-# define sprintf_   sprintf
-# define vsprintf_  vsprintf
-# define snprintf_  snprintf
-# define vsnprintf_ vsnprintf
-# define vprintf_   vprintf
+# error testing does not support option PRINTF_ALIAS_STANDARD_FUNCTION_NAMES
+#else
+# define printf_    tcl_printf
+# define sprintf_   tcl_sprintf
+# define vsprintf_  tcl_vsprintf
+# define snprintf_  tcl_snprintf
+# define vsnprintf_ tcl_vsnprintf
+# define vprintf_   tcl_vprintf
+# define fctprintf  tcl_fctprintf
+# define vfctprintf tcl_vfctprintf
 #endif
 
 
@@ -121,7 +125,7 @@ Examples:\n\
 // Functions
 //*******************************************************
 
-void putchar_(char character)
+void tcl_putchar(char character)
 {
   (void)character;
 }
