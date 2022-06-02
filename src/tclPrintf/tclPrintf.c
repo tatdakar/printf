@@ -56,7 +56,7 @@ extern "C" {
 #include <stdbool.h>
 #include <stdint.h>
 
-#include <printf/printf.h>
+#include "tclPrintf.h"
 
 #if PRINTF_ALIAS_STANDARD_FUNCTION_NAMES
 # define printf_    printf

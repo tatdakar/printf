@@ -30,7 +30,7 @@
 
 #define PRINTF_VISIBILITY static
 #include <printf_config.h>
-#include <printf/printf.c>
+#include <tclPrintf/tclPrintf.c>
 
 // use the 'catch' test framework
 #define CATCH_CONFIG_MAIN

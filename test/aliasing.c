@@ -1,5 +1,5 @@
 #include <printf_config.h>
-#include <printf/printf.h>
+#include <tclPrintf/tclPrintf.h>
 
 int strcmp_(const char* lhs, const char* rhs)
 {
