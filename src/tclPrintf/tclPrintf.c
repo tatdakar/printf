@@ -16,7 +16,7 @@
  * @note the implementations are thread-safe; re-entrant; use no functions from
  * the standard library; and do not dynamically allocate any memory.
  *
- * @license The MIT License (MIT)
+ * <b>License: The MIT License (MIT)</b>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
